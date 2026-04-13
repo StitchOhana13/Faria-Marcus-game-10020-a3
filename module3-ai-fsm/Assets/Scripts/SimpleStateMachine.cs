@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class SimpleStateMachine : MonoBehaviour
 {
-    enum State { Idle, Patrol, Chase, Search, Investigate }
+    enum State { Idle, Patrol, Chase, Search, Investigate, Alert, Return, Attack }
 
     [Header("Scene References")]
     public Transform character;
@@ -54,7 +54,7 @@ public class SimpleStateMachine : MonoBehaviour
 
     void Start()
     {
-        state = State.Patrol;
+        state = State.Idle;
     }
 
     void Update()
@@ -64,18 +64,26 @@ public class SimpleStateMachine : MonoBehaviour
             case State.Idle:
                 Idle();
                 break;
-
-            case State.Patrol:
-                Patrol();
-                break;
+            //case State.Patrol:
+            //    Patrol();
+            //    break;
             case State.Chase:
                 Chase();
                 break;
-            case State.Search:
-                Search();
-                break;
+            //case State.Search:
+            //    Search();
+            //    break;
             case State.Investigate:
                 Investigate();
+                break;
+            case State.Attack:
+                Attack();
+                break;
+            case State.Alert:
+                Alert();
+                break;
+            case State.Return:
+                ReturnHome();
                 break;
 
         }
@@ -106,91 +114,51 @@ public class SimpleStateMachine : MonoBehaviour
     {
         agent.speed = normalSpeed;
 
-        // during idle, can never see player
-        canSeePlayer = false;
-
-        float idleTimeElapsed = Time.time - idleTime;
-        if (idleTimeElapsed >= idleTimeThreshold)
+        if (soundHeard == true)
         {
-            Debug.Log(state);
-            state = State.Patrol;
+            state = State.Alert;
         }
-    }
 
-    void Patrol()
-    {
-        agent.speed = normalSpeed;
-
-        Transform patrolTransform = patrolWaypoints[patrolIndex];
-        agent.SetDestination(patrolTransform.position);
-
-        Vector3 positionXZ = transform.position;
-        positionXZ.y = 0.0f;
-
-        Vector3 patrolPositionXZ = patrolTransform.position;
-        patrolPositionXZ.y = 0.0f;
-
-        float distance = Vector2.Distance(positionXZ, patrolPositionXZ);
-        if (distance < waypointThreshold)
-        {
-            IncreasePatrolIndex();
-            Debug.Log(state);
-            state = State.Idle;
-            idleTime = Time.time;
-        }
 
         canSeePlayer = IsInViewCone();
         if (canSeePlayer)
         {
-            Debug.Log(state);
+            soundHeard = false;
             state = State.Chase;
         }
 
-        if (soundHeard)
-        {
-            EnterInvestigate();
-        }
+        // during idle, can never see player
+        //canSeePlayer = false;
+
+        //float idleTimeElapsed = Time.time - idleTime;
+        //if (idleTimeElapsed >= idleTimeThreshold)
+        //{
+        //    Debug.Log(state);
+        //    state = State.Patrol;
+        //}
     }
 
-    void Chase()
-    {
-        agent.speed = chaseSpeed;
-        agent.SetDestination(character.position);
-
-        canSeePlayer = IsInViewCone();
-        if (!canSeePlayer)
-        {
-            state = State.Search;
-            Debug.Log(state);
-            searchTime = Time.time;
-        }
-    }
-
-    void EnterInvestigate()
-    {
-        state = State.Investigate;
-        investigateTime = Time.time;
-    }
-    void Investigate()
+    void Alert()
     {
         agent.SetDestination(soundLocation);
 
         float distance = Vector3.Distance(transform.position, character.transform.position);
 
-        if(distance <= investigateDistance)
+        if (distance <= investigateDistance)
         {
-            LookAround();
-            float timeElapsed = Time.time - investigateTime;
-            if (timeElapsed >= investigateThreshold)
-            {
-                soundHeard = false;
-                state = State.Patrol;
-            }
+            state = State.Investigate;
+            //LookAround();
+            //float timeElapsed = Time.time - investigateTime;
+            //if (timeElapsed >= investigateThreshold)
+            //{
+            //    soundHeard = false;
+            //    state = State.Investigate;
+            //}
         }
-        else
-        {
-            investigateTime = Time.time;
-        }
+        //else
+        //{
+        //    investigateTime = Time.time;
+        //}
 
         //viewEnabled = true;
         canSeePlayer = IsInViewCone();
@@ -202,31 +170,134 @@ public class SimpleStateMachine : MonoBehaviour
         }
     }
 
-    void LookAround()
-    {
-        //float angle = Mathf.
-    }
-    void Search()
+    //void Patrol()
+    //{
+    //    agent.speed = normalSpeed;
+
+    //    Transform patrolTransform = patrolWaypoints[patrolIndex];
+    //    agent.SetDestination(patrolTransform.position);
+
+    //    Vector3 positionXZ = transform.position;
+    //    positionXZ.y = 0.0f;
+
+    //    Vector3 patrolPositionXZ = patrolTransform.position;
+    //    patrolPositionXZ.y = 0.0f;
+
+    //    float distance = Vector2.Distance(positionXZ, patrolPositionXZ);
+    //    if (distance < waypointThreshold)
+    //    {
+    //        IncreasePatrolIndex();
+    //        Debug.Log(state);
+    //        state = State.Idle;
+    //        idleTime = Time.time;
+    //    }
+
+    //    canSeePlayer = IsInViewCone();
+    //    if (canSeePlayer)
+    //    {
+    //        Debug.Log(state);
+    //        state = State.Chase;
+    //    }
+
+    //    if (soundHeard)
+    //    {
+    //        EnterInvestigate();
+    //    }
+    //}
+
+    void Chase()
     {
         agent.speed = chaseSpeed;
+        agent.SetDestination(character.position);
 
-        float searchTimeElapsed = Time.time - searchTime;
+        canSeePlayer = IsInViewCone();
+        if (!canSeePlayer)
+        {
+            state = State.Investigate;
+        }
+    }
 
-        agent.SetDestination(transform.forward + transform.right);
+    //void EnterInvestigate()
+    //{
+    //    state = State.Investigate;
+    //    investigateTime = Time.time;
+    //}
+    void Investigate()
+    {
+        //agent.SetDestination(soundLocation);
+
+        float timeElapsed = Time.time - investigateTime;
+
+        transform.Rotate(Vector3.up, Mathf.Sin(Time.time) * Time.deltaTime * 90f);
+
+        if (timeElapsed >= investigateThreshold)
+        {
+            soundHeard = false;
+            state = State.Return;
+        }
+        else
+        {
+            investigateTime = Time.time;
+        }
+        //float distance = Vector3.Distance(transform.position, character.transform.position);
+
+        //if(distance <= investigateDistance)
+        //{
+        //    float timeElapsed = Time.time - investigateTime;
+
+        //    transform.Rotate(Vector3.up, Mathf.Sin(Time.time) * Time.deltaTime * 90f);
+
+        //    if (timeElapsed >= investigateThreshold)
+        //    {
+        //        soundHeard = false;
+        //        state = State.Return;
+        //    }
+        //}
+
+        //viewEnabled = true;
         canSeePlayer = IsInViewCone();
 
         if (canSeePlayer)
         {
+            soundHeard = false;
             state = State.Chase;
-            Debug.Log(state);
-        }
-
-        if (searchTimeElapsed >= searchTimeThreshold)
-        {
-            state = State.Patrol;
-            Debug.Log(state);
         }
     }
+
+    //void Search()
+    //{
+    //    agent.speed = chaseSpeed;
+
+    //    float searchTimeElapsed = Time.time - searchTime;
+
+    //    agent.SetDestination(transform.forward + transform.right);
+    //    canSeePlayer = IsInViewCone();
+
+    //    if (canSeePlayer)
+    //    {
+    //        state = State.Chase;
+    //        Debug.Log(state);
+    //    }
+
+    //    if (searchTimeElapsed >= searchTimeThreshold)
+    //    {
+    //        state = State.Patrol;
+    //        Debug.Log(state);
+    //    }
+    //}
+
+    void Attack()
+    {
+        //if Predator reaches player, game over
+
+    }
+
+    void ReturnHome()
+    {
+        //predator returns to idle position after not finding or losing the player
+
+    }
+
 
 
     // --- HELPER FUNCTIONS ---
@@ -253,11 +324,11 @@ public class SimpleStateMachine : MonoBehaviour
         return false;
     }
 
-    void IncreasePatrolIndex()
-    {
-        patrolIndex++;
-        if (patrolIndex >= patrolWaypoints.Length) patrolIndex = 0;
-    }
+    //void IncreasePatrolIndex()
+    //{
+    //    patrolIndex++;
+    //    if (patrolIndex >= patrolWaypoints.Length) patrolIndex = 0;
+    //}
 
     // --- GIZMO DRAWING FOR DEBUG ---
 
