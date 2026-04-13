@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class SoundObject : MonoBehaviour
 {
 
-    public UnityEvent<SoundObject> OnSoundEmitted;
+    public UnityEvent<SoundObject> OnSoundEmitted = new UnityEvent<SoundObject>();
 
     AudioSource audioSource;
     public virtual void Awake()

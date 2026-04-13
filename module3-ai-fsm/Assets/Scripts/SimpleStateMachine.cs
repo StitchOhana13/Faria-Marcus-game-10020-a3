@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class SimpleStateMachine : MonoBehaviour
 {
-    enum State { Idle, Patrol, Chase, Search }
+    enum State { Idle, Patrol, Chase, Search, Investigate }
 
     [Header("Scene References")]
     public Transform character;
@@ -25,6 +25,9 @@ public class SimpleStateMachine : MonoBehaviour
     public float playerDistThreshold = 2.0f;
     public float normalSpeed = 3.5f;
     public float chaseSpeed = 5.0f;
+    public float investigateThreshold = 10.0f;
+    public float investigateDistance = 2.0f;
+    public float lookAroundAngle = 45.0f;
 
     [Header("Vision Settings")]
     public float viewRadius = 10f;
@@ -38,10 +41,15 @@ public class SimpleStateMachine : MonoBehaviour
     float idleTime;
     float searchTime;
     bool canSeePlayer;
+    float investigateTime = 0.0f;
+
+    bool soundHeard = false;
+    Vector3 soundLocation = Vector3.zero;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        
     }
 
     void Start()
@@ -66,6 +74,10 @@ public class SimpleStateMachine : MonoBehaviour
             case State.Search:
                 Search();
                 break;
+            case State.Investigate:
+                Investigate();
+                break;
+
         }
 
         // regardless of state, NPC always looks in the direction they are moving
@@ -85,6 +97,11 @@ public class SimpleStateMachine : MonoBehaviour
         if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
     }
 
+    public void SoundRecieve (SoundObject soundObject)
+    {
+        soundHeard = true;
+        soundLocation = soundObject.transform.position;
+    }
     void Idle()
     {
         agent.speed = normalSpeed;
@@ -128,6 +145,11 @@ public class SimpleStateMachine : MonoBehaviour
             Debug.Log(state);
             state = State.Chase;
         }
+
+        if (soundHeard)
+        {
+            EnterInvestigate();
+        }
     }
 
     void Chase()
@@ -144,6 +166,46 @@ public class SimpleStateMachine : MonoBehaviour
         }
     }
 
+    void EnterInvestigate()
+    {
+        state = State.Investigate;
+        investigateTime = Time.time;
+    }
+    void Investigate()
+    {
+        agent.SetDestination(soundLocation);
+
+        float distance = Vector3.Distance(transform.position, character.transform.position);
+
+        if(distance <= investigateDistance)
+        {
+            LookAround();
+            float timeElapsed = Time.time - investigateTime;
+            if (timeElapsed >= investigateThreshold)
+            {
+                soundHeard = false;
+                state = State.Patrol;
+            }
+        }
+        else
+        {
+            investigateTime = Time.time;
+        }
+
+        //viewEnabled = true;
+        canSeePlayer = IsInViewCone();
+
+        if (canSeePlayer)
+        {
+            soundHeard = false;
+            state = State.Chase;
+        }
+    }
+
+    void LookAround()
+    {
+        //float angle = Mathf.
+    }
     void Search()
     {
         agent.speed = chaseSpeed;

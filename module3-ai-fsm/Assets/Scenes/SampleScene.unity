@@ -363,6 +363,9 @@ MonoBehaviour:
   playerDistThreshold: 2
   normalSpeed: 3.5
   chaseSpeed: 5
+  investigateThreshold: 10
+  investigateDistance: 2
+  lookAroundAngle: 45
   viewRadius: 10
   viewAngle: 60
 --- !u!195 &239537735
@@ -451,7 +454,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 61ffc8df79853a44291c2f9ca0ef5ac5, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1537,6 +1540,52 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: ab70cdf0848e02948a7394fe660aaa25, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &1573953710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1573953712}
+  - component: {fileID: 1573953711}
+  m_Layer: 0
+  m_Name: Sensory Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1573953711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573953710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5cf7b3f28c831488a895bbb1951b84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundObjects: {fileID: 0}
+  npc: {fileID: 0}
+--- !u!4 &1573953712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573953710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.9405937, y: -2.8664005, z: -0.881839}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1624945938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1820,6 +1869,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1573953712}
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 1548932995}
