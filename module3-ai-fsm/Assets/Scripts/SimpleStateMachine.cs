@@ -10,12 +10,15 @@ using UnityEngine.SceneManagement;
 
 public class SimpleStateMachine : MonoBehaviour
 {
-    enum State { Idle, Patrol, Chase, Search, Investigate, Alert, Return, Attack }
+    enum State { Idle, Chase, Investigate, Alert, Return, Attack }
 
     [Header("Scene References")]
     public Transform character;
-    public Transform[] patrolWaypoints;
+    public Transform NPC;
+    //public Transform[] patrolWaypoints;
+    public Transform homeBase;
     public TextMeshProUGUI stateText;
+
 
     [Header("Config")]
     public float idleTimeThreshold = 2.0f;
@@ -36,15 +39,15 @@ public class SimpleStateMachine : MonoBehaviour
 
     State state;
     NavMeshAgent agent;
-    int patrolIndex = 0;
 
-    float idleTime;
-    float searchTime;
+
     bool canSeePlayer;
     float investigateTime = 0.0f;
 
     bool soundHeard = false;
     Vector3 soundLocation = Vector3.zero;
+
+    //public Transform homeBase = new Vector3(-0.396f, 0, 0.528f);
 
     private void Awake()
     {
@@ -64,15 +67,9 @@ public class SimpleStateMachine : MonoBehaviour
             case State.Idle:
                 Idle();
                 break;
-            //case State.Patrol:
-            //    Patrol();
-            //    break;
             case State.Chase:
                 Chase();
                 break;
-            //case State.Search:
-            //    Search();
-            //    break;
             case State.Investigate:
                 Investigate();
                 break;
@@ -127,15 +124,7 @@ public class SimpleStateMachine : MonoBehaviour
             state = State.Chase;
         }
 
-        // during idle, can never see player
-        //canSeePlayer = false;
 
-        //float idleTimeElapsed = Time.time - idleTime;
-        //if (idleTimeElapsed >= idleTimeThreshold)
-        //{
-        //    Debug.Log(state);
-        //    state = State.Patrol;
-        //}
     }
 
     void Alert()
@@ -215,6 +204,13 @@ public class SimpleStateMachine : MonoBehaviour
         {
             state = State.Investigate;
         }
+
+        float distance = Vector3.Distance(transform.position, character.transform.position);
+
+        if (distance >= 1)
+        {
+            state = State.Attack;
+        }
     }
 
     //void EnterInvestigate()
@@ -288,17 +284,33 @@ public class SimpleStateMachine : MonoBehaviour
 
     void Attack()
     {
-        //if Predator reaches player, game over
+        GameOver();
 
+        //if Predator reaches player, game over
+        //float distance = Vector3.Distance(transform.position, character.transform.position);
+
+        //if (distance >= 1)
+        //{
+        //    GameOver();
+        //}
     }
 
     void ReturnHome()
     {
         //predator returns to idle position after not finding or losing the player
-
+        // Vector3 HomeBase
+        agent.SetDestination(homeBase.position);
+        float distance = Vector3.Distance(transform.position, homeBase.position);
+        if (distance >= 0)
+        {
+            state = State.Idle;
+        }
     }
 
+    void GameOver()
+    {
 
+    }
 
     // --- HELPER FUNCTIONS ---
 
@@ -332,24 +344,24 @@ public class SimpleStateMachine : MonoBehaviour
 
     // --- GIZMO DRAWING FOR DEBUG ---
 
-    private void OnDrawGizmos()
-    {
-        // draw the waypoints
-        Gizmos.color = Color.red;
-        foreach (Transform patrolTransform in patrolWaypoints)
-        {
-            Gizmos.DrawWireSphere(patrolTransform.position, 0.5f);
-        }
+    //private void OnDrawGizmos()
+    //{
+    //    // draw the waypoints
+    //    Gizmos.color = Color.red;
+    //    foreach (Transform patrolTransform in patrolWaypoints)
+    //    {
+    //        Gizmos.DrawWireSphere(patrolTransform.position, 0.5f);
+    //    }
 
-        // draw the view cone (2D version)
-        if (state != State.Idle)
-        {
-            Handles.color = new Color(0f, 1f, 1f, 0.25f);
-            if (canSeePlayer) Handles.color = new Color(1f, 0f, 0f, 0.25f);
+    //    // draw the view cone (2D version)
+    //    if (state != State.Idle)
+    //    {
+    //        Handles.color = new Color(0f, 1f, 1f, 0.25f);
+    //        if (canSeePlayer) Handles.color = new Color(1f, 0f, 0f, 0.25f);
 
-            Vector3 forward = transform.forward;
-            Handles.DrawSolidArc(transform.position, Vector3.up, forward, viewAngle / 2f, viewRadius);
-            Handles.DrawSolidArc(transform.position, Vector3.up, forward, -viewAngle / 2f, viewRadius);
-        }
-    }
+    //        Vector3 forward = transform.forward;
+    //        Handles.DrawSolidArc(transform.position, Vector3.up, forward, viewAngle / 2f, viewRadius);
+    //        Handles.DrawSolidArc(transform.position, Vector3.up, forward, -viewAngle / 2f, viewRadius);
+    //    }
+    //}
 }

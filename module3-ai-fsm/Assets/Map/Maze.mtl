@@ -1,0 +1,122 @@
+# Wavefront OBJ material file
+# Contains 9 materials
+
+newmtl coarse_dirt
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/coarse_dirt.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/coarse_dirt.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl purpur_block
+Ns 165.75
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0.195 0.195 0.195
+map_Ka tex/purpur_block.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/purpur_block.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl purpur_pillar_top
+Ns 165.75
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0.195 0.195 0.195
+map_Ka tex/purpur_pillar_top.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/purpur_pillar_top.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl white_concrete
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/white_concrete.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/white_concrete.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl pink_concrete
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/pink_concrete.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/pink_concrete.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl black_concrete
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/black_concrete.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/black_concrete.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl dripstone_block
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/dripstone_block.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/dripstone_block.png
+map_d tex/dripstone_block.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl cracked_deepslate_bricks
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+map_Ka tex/cracked_deepslate_bricks.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/cracked_deepslate_bricks.png
+illum 2
+# d 1
+# Tr 0
+
+newmtl verdant_froglight_side
+Ns 0
+Ka 0.2 0.2 0.2
+Kd 1 1 1
+Ks 0 0 0
+Ke 1 1 1
+map_Ka tex/verdant_froglight_side.png
+# for G3D, to make textures look blocky:
+interpolateMode NEAREST_MAGNIFICATION_TRILINEAR_MIPMAP_MINIFICATION
+map_Kd tex/verdant_froglight_side.png
+map_Ke tex/verdant_froglight_side.png
+illum 2
+# d 1
+# Tr 0
