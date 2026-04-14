@@ -28,8 +28,8 @@ public class SimpleStateMachine : MonoBehaviour
     public float playerDistThreshold = 2.0f;
     public float normalSpeed = 3.5f;
     public float chaseSpeed = 5.0f;
-    public float investigateThreshold = 10.0f;
-    public float investigateDistance = 2.0f;
+    public float investigateThreshold = 5.0f;
+    public float investigateDistance = 5.0f;
     public float lookAroundAngle = 45.0f;
 
     [Header("Vision Settings")]
@@ -40,9 +40,10 @@ public class SimpleStateMachine : MonoBehaviour
     State state;
     NavMeshAgent agent;
 
+    AudioSource audioSource;
 
     bool canSeePlayer;
-    float investigateTime = 0.0f;
+    float investigateTime = 5.0f;
 
     bool soundHeard = false;
     Vector3 soundLocation = Vector3.zero;
@@ -52,7 +53,8 @@ public class SimpleStateMachine : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     void Start()
@@ -96,10 +98,10 @@ public class SimpleStateMachine : MonoBehaviour
         // show state on screen
         stateText.text = $"State: {state}";
 
-        // if NPC ever gets close to player, end 
-        Vector3 toPlayer = character.position - transform.position;
-        float distToPlayer = toPlayer.magnitude;
-        if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
+        //// if NPC ever gets close to player, end 
+        //Vector3 toPlayer = character.position - transform.position;
+        //float distToPlayer = toPlayer.magnitude;
+        //if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
     }
 
     public void SoundRecieve (SoundObject soundObject)
@@ -114,6 +116,7 @@ public class SimpleStateMachine : MonoBehaviour
         if (soundHeard == true)
         {
             state = State.Alert;
+            audioSource.Play();
         }
 
 
@@ -131,10 +134,13 @@ public class SimpleStateMachine : MonoBehaviour
     {
         agent.SetDestination(soundLocation);
 
-        float distance = Vector3.Distance(transform.position, character.transform.position);
+
+
+        float distance = Vector3.Distance(transform.position, soundLocation);
 
         if (distance <= investigateDistance)
         {
+            soundHeard = false;
             state = State.Investigate;
             //LookAround();
             //float timeElapsed = Time.time - investigateTime;
@@ -199,6 +205,8 @@ public class SimpleStateMachine : MonoBehaviour
         agent.speed = chaseSpeed;
         agent.SetDestination(character.position);
 
+        //audioSource.Play();
+
         canSeePlayer = IsInViewCone();
         if (!canSeePlayer)
         {
@@ -207,7 +215,7 @@ public class SimpleStateMachine : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, character.transform.position);
 
-        if (distance >= 1)
+        if (distance <= 1)
         {
             state = State.Attack;
         }
@@ -222,19 +230,27 @@ public class SimpleStateMachine : MonoBehaviour
     {
         //agent.SetDestination(soundLocation);
 
+
         float timeElapsed = Time.time - investigateTime;
 
-        transform.Rotate(Vector3.up, Mathf.Sin(Time.time) * Time.deltaTime * 90f);
+        transform.Rotate(Vector3.up, Mathf.Sin(Time.time) * Time.deltaTime * 180f);
 
         if (timeElapsed >= investigateThreshold)
         {
-            soundHeard = false;
+
             state = State.Return;
+
         }
-        else
+
+        if (soundHeard == true)
         {
-            investigateTime = Time.time;
+            audioSource.Play();
+            state = State.Alert;
         }
+        //else
+        //{
+        //    investigateTime = Time.time;
+        //}
         //float distance = Vector3.Distance(transform.position, character.transform.position);
 
         //if(distance <= investigateDistance)
@@ -284,7 +300,10 @@ public class SimpleStateMachine : MonoBehaviour
 
     void Attack()
     {
-        GameOver();
+        // if NPC ever gets close to player, end 
+        Vector3 toPlayer = character.position - transform.position;
+        float distToPlayer = toPlayer.magnitude;
+        if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
 
         //if Predator reaches player, game over
         //float distance = Vector3.Distance(transform.position, character.transform.position);
@@ -299,18 +318,30 @@ public class SimpleStateMachine : MonoBehaviour
     {
         //predator returns to idle position after not finding or losing the player
         // Vector3 HomeBase
+
         agent.SetDestination(homeBase.position);
         float distance = Vector3.Distance(transform.position, homeBase.position);
-        if (distance >= 0)
+        if (distance <= 1)
         {
             state = State.Idle;
         }
+
+        canSeePlayer = IsInViewCone();
+
+        if (canSeePlayer)
+        {
+            soundHeard = false;
+            state = State.Chase;
+        }
+
+        if (soundHeard == true)
+        {
+            audioSource.Play();
+            state = State.Alert;
+        }
     }
 
-    void GameOver()
-    {
 
-    }
 
     // --- HELPER FUNCTIONS ---
 
@@ -342,26 +373,26 @@ public class SimpleStateMachine : MonoBehaviour
     //    if (patrolIndex >= patrolWaypoints.Length) patrolIndex = 0;
     //}
 
-    // --- GIZMO DRAWING FOR DEBUG ---
+     //--- GIZMO DRAWING FOR DEBUG ---
 
-    //private void OnDrawGizmos()
-    //{
-    //    // draw the waypoints
-    //    Gizmos.color = Color.red;
-    //    foreach (Transform patrolTransform in patrolWaypoints)
-    //    {
-    //        Gizmos.DrawWireSphere(patrolTransform.position, 0.5f);
-    //    }
+    private void OnDrawGizmos()
+    {
+        // draw the waypoints
+        Gizmos.color = Color.red;
+        //foreach (Transform patrolTransform in patrolWaypoints)
+        //{
+        //    Gizmos.DrawWireSphere(patrolTransform.position, 0.5f);
+        //}
 
-    //    // draw the view cone (2D version)
-    //    if (state != State.Idle)
-    //    {
-    //        Handles.color = new Color(0f, 1f, 1f, 0.25f);
-    //        if (canSeePlayer) Handles.color = new Color(1f, 0f, 0f, 0.25f);
+        // draw the view cone (2D version)
+        if (state != State.Idle)
+        {
+            Handles.color = new Color(0f, 1f, 1f, 0.25f);
+            if (canSeePlayer) Handles.color = new Color(1f, 0f, 0f, 0.25f);
 
-    //        Vector3 forward = transform.forward;
-    //        Handles.DrawSolidArc(transform.position, Vector3.up, forward, viewAngle / 2f, viewRadius);
-    //        Handles.DrawSolidArc(transform.position, Vector3.up, forward, -viewAngle / 2f, viewRadius);
-    //    }
-    //}
+            Vector3 forward = transform.forward;
+            Handles.DrawSolidArc(transform.position, Vector3.up, forward, viewAngle / 2f, viewRadius);
+            Handles.DrawSolidArc(transform.position, Vector3.up, forward, -viewAngle / 2f, viewRadius);
+        }
+    }
 }

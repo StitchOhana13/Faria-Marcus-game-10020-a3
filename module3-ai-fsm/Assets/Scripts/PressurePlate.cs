@@ -13,6 +13,8 @@ public class PressurePlate : SoundObject
     public override void Awake()
     {
         base.Awake();
+
+        meshRenderer = GetComponent<MeshRenderer>();
     }
 
     public override void OnTriggerEnter(Collider other)

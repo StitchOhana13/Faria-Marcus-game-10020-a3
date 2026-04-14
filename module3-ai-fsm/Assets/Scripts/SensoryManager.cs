@@ -9,27 +9,39 @@ public class SensoryManager : MonoBehaviour
 
     public SimpleStateMachine npc;
 
-    public void OnEnable()
+    public void Awake()
     {
-        foreach (Transform transform in soundObjects.transform)
+        foreach (Transform child in soundObjects.transform)
         {
-            SoundObject soundObject = transform.GetComponent<SoundObject>();
+            SoundObject soundObject = child.GetComponent<SoundObject>();
             if (soundObject != null)
             {
-                soundObject.OnSoundEmitted.AddListener(npc.SoundRecieve);
+                soundObject.OnSoundTriggered.AddListener(npc.SoundRecieve);
             }
         }
     }
 
-    public void OnDisable()
-    {
-        foreach (Transform transform in soundObjects.transform)
-        {
-            SoundObject soundObject = transform.GetComponent<SoundObject>();
-            if (soundObject != null)
-            {
-                soundObject.OnSoundEmitted.RemoveListener(npc.SoundRecieve);
-            }
-        }
-    }
+    //public void OnEnable()
+    //{
+    //    foreach (Transform transform in soundObjects.transform)
+    //    {
+    //        SoundObject soundObject = transform.GetComponent<SoundObject>();
+    //        if (soundObject != null)
+    //        {
+    //            soundObject.OnSoundTriggered.AddListener(npc.SoundRecieve);
+    //        }
+    //    }
+    //}
+
+    //public void OnDisable()
+    //{
+    //    foreach (Transform transform in soundObjects.transform)
+    //    {
+    //        SoundObject soundObject = transform.GetComponent<SoundObject>();
+    //        if (soundObject != null)
+    //        {
+    //            soundObject.OnSoundTriggered.RemoveListener(npc.SoundRecieve);
+    //        }
+    //    }
+    //}
 }

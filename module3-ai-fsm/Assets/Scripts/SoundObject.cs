@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class SoundObject : MonoBehaviour
 {
 
-    public UnityEvent<SoundObject> OnSoundEmitted = new UnityEvent<SoundObject>();
+    public UnityEvent<SoundObject> OnSoundTriggered = new UnityEvent<SoundObject>();
 
     AudioSource audioSource;
     public virtual void Awake()
@@ -19,7 +19,7 @@ public class SoundObject : MonoBehaviour
         if (other.GetComponent<Character>() != null)
         {
             audioSource.Play();
-            OnSoundEmitted.Invoke(this);
+            OnSoundTriggered.Invoke(this);
         }
     }
 
