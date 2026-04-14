@@ -301,17 +301,17 @@ public class SimpleStateMachine : MonoBehaviour
     void Attack()
     {
         // if NPC ever gets close to player, end 
-        Vector3 toPlayer = character.position - transform.position;
-        float distToPlayer = toPlayer.magnitude;
-        if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
+        //Vector3 toPlayer = character.position - transform.position;
+        //float distToPlayer = toPlayer.magnitude;
+        //if (distToPlayer < playerDistThreshold && canSeePlayer) SceneManager.LoadScene("END");
 
         //if Predator reaches player, game over
-        //float distance = Vector3.Distance(transform.position, character.transform.position);
+        float distance = Vector3.Distance(transform.position, character.transform.position);
 
-        //if (distance >= 1)
-        //{
-        //    GameOver();
-        //}
+        if (distance >= 1)
+        {
+            SceneManager.LoadScene("END");
+        }
     }
 
     void ReturnHome()
