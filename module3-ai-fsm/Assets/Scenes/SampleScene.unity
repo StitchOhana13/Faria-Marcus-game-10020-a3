@@ -1339,7 +1339,7 @@ MonoBehaviour:
   rotationSpeed: 1
   searchTimeThreshold: 5
   playerDistThreshold: 2
-  normalSpeed: 10
+  normalSpeed: 20
   chaseSpeed: 50
   investigateThreshold: 10
   investigateDistance: 2
@@ -1357,7 +1357,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 10
-  m_Acceleration: 45
+  m_Acceleration: 115.4
   avoidancePriority: 50
   m_AngularSpeed: 246.56
   m_StoppingDistance: 1
